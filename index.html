@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
   <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
   <link rel="stylesheet" href="dist/css/skins/skin-blue.min.css">
+  <link rel="stylesheet" href="static/style.css">
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
@@ -139,7 +140,7 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body no-padding">
-              <table class="table table-striped">
+              <table class="table table-striped" >
                 <thead>
                   <tr>
                     <th style="width: 10px">Foto</th>
@@ -150,48 +151,7 @@
                     <th>Ações</th>
                   </tr>
                 </thead>
-                <tbody>
-
-                  <tr>
-                    <td><img src="dist/img/user1-128x128.jpg" alt="User Image" class="img-circle img-sm"></td>
-                    <td>Fulano</td>
-                    <td>fulano@hcode.com.br</td>
-                    <td>Sim</td>
-                    <td>02/04/2018</td>
-                    <td>
-                      <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
-                      <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td>
-                      <img src="dist/img/user1-128x128.jpg" alt="User Image" class="img-circle img-sm">
-                    </td>
-                    <td>Fulano</td>
-                    <td>fulano@hcode.com.br</td>
-                    <td>Sim</td>
-                    <td>02/04/2018</td>
-                    <td>
-                      <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
-                      <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td>
-                      <img src="dist/img/user1-128x128.jpg" alt="User Image" class="img-circle img-sm">
-                    </td>
-                    <td>Fulano</td>
-                    <td>fulano@hcode.com.br</td>
-                    <td>Sim</td>
-                    <td>02/04/2018</td>
-                    <td>
-                      <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
-                      <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
-                    </td>
-                  </tr>
-                  
+                <tbody id="userList">
                 </tbody>
               </table>
             </div>
@@ -235,12 +195,10 @@
           </div>
 
           <div class="box box-success">
-            <div class="box-header with-border">
-              <h3 class="box-title">Novo Usuário</h3>
-            </div>
+            <input type="checkbox" id="switch" onclick="switchForm('form-user-create')"><label class="label1" for="switch"></label>
             <!-- /.box-header -->
             <!-- form start -->
-            <form role="form" id="form-user-create">
+            <form role="form" id="form-user-create" hidden>
               <div class="box-body">
                 <div class="form-group">
                   <label for="exampleInputName">Nome</label>
@@ -250,12 +208,12 @@
                   <label>Gênero</label>
                   <div class="radio">
                     <label for="exampleInputGenderM">
-                      <input type="radio" id="exampleInputGenderM" name="gender">
+                      <input type="radio" id="exampleInputGenderM" value="M" name="gender">
                       Masculino</label>
                   </div>
                   <div class="radio">
                     <label for="exampleInputGenderF">
-                      <input type="radio" id="exampleInputGenderF" name="gender">
+                      <input type="radio" id="exampleInputGenderF" value="F" name="gender">
                       Feminino</label>
                   </div>
                 </div>
@@ -524,7 +482,7 @@
                 </div>
                 <div class="checkbox">
                   <label>
-                    <input type="checkbox" name="admin"> Administrador
+                    <input type="checkbox" name="admin" id="admin" value=""> Administrador
                   </label>
                 </div>
               </div>
@@ -554,6 +512,8 @@
   </footer>
 
 </div>
-
+<script src="models/user.js"></script>
+<script src="controllers/userController.js"></script>
+<script src="scripts/index.js"></script>
 </body>
 </html>
