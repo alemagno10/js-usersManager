@@ -173,7 +173,7 @@ class UserController{
             form.dataset.oldUser = JSON.stringify(user);
             for(let [key,value] of Object.entries(user)){
                 key = key.replace('_','');
-                if(key == 'register') continue
+                if(key == 'register' || key == 'id') continue
                 else if(form[key].type == 'file'){}
                 else if(form[key].type == 'radio' || (form[key].type == 'checkbox' && form[key].checked)) form[key].checked = true
                 else form[key].value = value;
