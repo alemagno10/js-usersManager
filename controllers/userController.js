@@ -13,28 +13,32 @@ class UserController{
     closeCreate(boolean){
         this.formEl.hidden = boolean;
         document.getElementById('switch').checked = !boolean
-    }
+    };
 
     closeUpdate(boolean){
         document.getElementById('box-user-update').hidden = boolean;
-    }
+    };
     
     startStorage(){
         if(!localStorage.getItem('users')) localStorage.setItem('users', JSON.stringify({}));
-        if(!window.id) window.id = 0;
-    }
+        if(!localStorage.getItem('id')) localStorage.setItem('id', 0);
+    };
 
     showUsers(){
-        let users = JSON.parse(localStorage.getItem('users'))
-
-        users.forEach(user=>{
-            user = user.value;
+        this.tableEl.innerHTML = '';
+        let users = JSON.parse(localStorage.getItem('users'));
+        let userCount = 0;
+        let admCount = 0;
+        for(const key in users){
+            let value = users[key];
+            if(value._admin) admCount ++;
+            else userCount ++; 
             let element = this.createLine(value,'tr',true);
             this.addTableListener(value,element);
             this.tableEl.appendChild(element); 
-
-        })
-    }
+        this.updateCount(userCount,admCount)   
+        }
+    };
 
     onSubmit(form){
         form.addEventListener('submit', event=>{
@@ -48,8 +52,9 @@ class UserController{
                 btn.disabled = false; 
                 let tr = this.createLine(user,'tr');
                 this.addTableListener(user,tr);
-                user.save();
+                user.save(true);
                 this.showUsers();
+                
             }, e=>{
                 console.error(e);
             })
@@ -67,10 +72,13 @@ class UserController{
             this.getPhoto(this.formUpdateEl, oldUser._photo).then((content)=>{
                 let tr = this.tableEl.rows[this.formUpdateEl.dataset.trIndex];
                 user.photo = content;
+                user._id = oldUser._id
                 this.formUpdateEl.reset();
                 tr.innerHTML = this.addTableHtml(user,false);
                 this.addTableListener(user,tr);
                 this.closeUpdate(true);
+                user.save(false)
+                this.showUsers()
             }, e=>{
                 console.error(e);
             })
@@ -93,7 +101,7 @@ class UserController{
             if(file)fileReader.readAsDataURL(file);
             else resolve(defaultImg);
         })
-    }
+    };
     
     getValues(form){
         let isValid = true;   
@@ -113,14 +121,14 @@ class UserController{
             if(!isValid) return false
         });
         return new User(newUser)
-    }
+    };
 
-    static updateCount(){
+    updateCount(uc, ac){
         let user = document.getElementById("user-count");
         let adm = document.getElementById("admin-count");
-        user.innerHTML = ''
-        adm.innerHTML = ''
-    }
+        user.innerHTML = uc
+        adm.innerHTML = ac
+    };
 
     addTableHtml(user,storage){
         let btns = 
@@ -142,19 +150,19 @@ class UserController{
             ${user.admin ? '<td>Sim</td>': '<td>Não</td>'}
             <td>${user.register.toLocaleDateString()}</td>` + btns;
         }
-    }
+    };
 
     createLine(user,element,storage){
         element = document.createElement(element);
         element.innerHTML =  this.addTableHtml(user,storage) 
         return element
-    }
+    };
 
     addTableListener(user,element){
         element.querySelector('.btn-delete').addEventListener('click', e=>{
             if(confirm('Deseja realmente excluir?')){
-                element.remove();
-                //this.updateCount();
+                User.remove(user._id);
+                this.showUsers();
             }
         });
         element.querySelector('.btn-edit').addEventListener('click', e=>{

@@ -47,17 +47,24 @@ class User{
     };  
 
     static getNewId(){
-        window.id ++;
-        return window.id
+        let id = localStorage.getItem('id');
+        id++;
+        localStorage.setItem('id', id);
+        return id
     };
 
-    save(){
+    save(newuser = null){
         let users = JSON.parse(localStorage.getItem('users'));
-        this.id = User.getNewId();
-        users.this.id = this;
+        if(newuser) this.id = User.getNewId();
+        users[this.id] = this;
         console.log(JSON.stringify(users))
         localStorage.setItem('users', JSON.stringify(users));
-        UserController.updateCount();
+    };
+
+    static remove(id){
+        let users = JSON.parse(localStorage.getItem('users'));
+        delete users[id];
+        localStorage.setItem('users', JSON.stringify(users));
     };
 
 }
