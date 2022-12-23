@@ -1,3 +1,3 @@
-let userController = new UserController('form-user-create', 'userList')
+let userController = new UserController('form-user-create', 'form-user-update', 'userList')
 
 

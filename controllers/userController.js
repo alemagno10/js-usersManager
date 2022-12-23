@@ -1,20 +1,21 @@
 class UserController{
-    constructor(fromId, tableId){
+    constructor(fromId, fromUpdateId, tableId){
         this.formEl = document.getElementById(fromId);
+        this.formUpdateEl = document.getElementById(fromUpdateId);
         this.tableEl = document.getElementById(tableId);
-        this.onSubmit();
+        this.onSubmit(this.formEl);
         this.onEdit();
     }
 
-    onSubmit(){
-        this.formEl.addEventListener('submit', event=>{
+    onSubmit(form){
+        form.addEventListener('submit', event=>{
             event.preventDefault();
-            let btn  = this.formEl.querySelector('[type = submit]');
+            let btn  = form.querySelector('[type = submit]');
             btn.disabled = true; 
-            let values = this.getValues();
+            let values = this.getValues(form);
             this.getPhoto().then((content)=>{    
                 values.photo = content;
-                this.formEl.reset();
+                form.reset();
                 btn.disabled = false; 
                 this.addLine(values);
             }, e=>{
@@ -25,7 +26,6 @@ class UserController{
     
     onEdit(){
         document.querySelector('#box-user-update .btn-cancel').addEventListener('click', e=>{
-            console.log('ok')
             switchForm('box-user-update',false);
         })
     }
@@ -49,16 +49,14 @@ class UserController{
         })
     }
     
-    getValues(){
+    getValues(form){
         let isValid = true;   
         let newUser = {};
-        [...this.formEl.elements].forEach((field)=>{
+        [...form.elements].forEach((field)=>{
             if(['name', 'email', 'password'].includes(field.name) && !field.value){
                 field.parentElement.classList.add('has-error');
-                isValid = false;   
-                
+                isValid = false;    
             } else if (field.name === 'gender' && !field.checked){}
-            
             else{
                 if(field.name === 'admin'){
                     if(field.checked) field.value = true
@@ -71,6 +69,7 @@ class UserController{
         return new User(newUser)
     }
 
+
     updateCount(){
         let user = document.getElementById("user-count");
         let adm = document.getElementById("admin-count");
@@ -78,9 +77,8 @@ class UserController{
         adm.innerHTML = ''
     }
 
-    addLine(user){
-        let tr = document.createElement('tr')
-        tr.innerHTML = `
+    updateLine(user,element){
+        element.innerHTML = `
             <td><img src="${user.photo}" alt="User Image" class="img-circle img-sm"></td>
             <td>${user.name}</td>
             <td>${user.email}</td>
@@ -89,22 +87,34 @@ class UserController{
             <td>
               <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
               <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
-            </td>`;
+        </td>`;
+        return element
+    }
+
+    addLine(user){
+        let append = true;
+        let tr = document.createElement('tr');
+        tr = this.updateLine(user,tr);
         tr.querySelector('.btn-edit').addEventListener('click', e=>{
             switchForm('form-user-create',true);
             switchForm('box-user-update',false);
             let form = document.getElementById('form-user-update');
-            console.log(form)
             for(let [key,value] of Object.entries(user)){
                 key = key.replace('_','');
                 if(key == 'register') continue
                 else if(form[key].type == 'file'){}
                 else if(form[key].type == 'radio' || form[key].type == 'checkbox') form[key].checked = true
                 else form[key].value = value;
-            }
-        })
-        this.tableEl.appendChild(tr)
-          
+            };
+        });
+        this.formUpdateEl.addEventListener('submit', event=>{
+            event.preventDefault();
+            console.log('ok')
+            tr = this.updateLine(this.getValues(this.formUpdateEl), tr);
+            this.tableEl.appendChild(tr);
+        });
+                
+        this.tableEl.appendChild(tr);
     }
 };
 
